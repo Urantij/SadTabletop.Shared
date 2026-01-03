@@ -164,6 +164,21 @@ public class LimitSystem : ComponentSystemBase
         }
     }
 
+    /// <summary>
+    /// Возвращает список тех, кто не лимитед для ентити, и тех, кто лимитед.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public (Seat?[] theyKnow, Seat?[] theyDontKnow) FindWitnesses<T>(T entity) where T : EntityBase, ILimitable
+    {
+        // TODO можно и получше придумать)
+        Seat?[] theyDontKnow = _seats.EnumerateAllSeats().Where(seat => IsLimitedFor(entity, seat)).ToArray();
+        Seat?[] theyKnow = _seats.EnumerateAllSeats().Where(seat => !theyDontKnow.Contains(seat)).ToArray();
+
+        return (theyKnow, theyDontKnow);
+    }
+
     public bool IsLimitedFor<T>(T entity, Seat? seat) where T : EntityBase, ILimitable
     {
         return entity.EnumerateComponents()

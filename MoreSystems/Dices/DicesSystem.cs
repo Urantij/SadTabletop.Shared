@@ -6,6 +6,7 @@ using SadTabletop.Shared.Systems.Limit;
 using SadTabletop.Shared.Systems.Limit.Events;
 using SadTabletop.Shared.Systems.MyRandom;
 using SadTabletop.Shared.Systems.Seats;
+using SadTabletop.Shared.Systems.Table;
 using SadTabletop.Shared.Systems.Viewer;
 
 namespace SadTabletop.Shared.MoreSystems.Dices;
@@ -17,6 +18,8 @@ public class DicesSystem : SystemBase
     private readonly ViewerSystem _viewer;
     private readonly RandomSystem _random;
     private readonly CommunicationSystem _communication;
+
+    private readonly TableSystem _table;
 
     public DicesSystem(Game game) : base(game)
     {
@@ -36,12 +39,44 @@ public class DicesSystem : SystemBase
         _viewer.RegisterEntity<Dice>(TransformDice);
     }
 
+    public Dice CreateSimpleDice(float x, float y, int[] sideValues, int? defaultAssetId, int currentIndex = 0,
+        bool sendRelatedMessage = true)
+    {
+        Dice dice = new(sideValues.Select(sv => new DiceSide(sv, sv.ToString(), null)).ToArray(), defaultAssetId)
+        {
+            X = x,
+            Y = y,
+            CurrentSideIndex = currentIndex
+        };
+
+        _table.AddEntity(dice, sendRelatedMessage: sendRelatedMessage);
+
+        return dice;
+    }
+
+    public Dice CreateDice(float x, float y, DiceSide[] sides, int? defaultAssetId, int currentIndex = 0,
+        bool sendRelatedMessage = true)
+    {
+        Dice dice = new(sides, defaultAssetId)
+        {
+            X = x,
+            Y = y,
+            CurrentSideIndex = currentIndex
+        };
+        _table.AddEntity(dice, sendRelatedMessage: sendRelatedMessage);
+
+        return dice;
+    }
+
     // Разные методы, так как не уверен, мб стоит разные сообщения сделать.
     public void Set(Dice dice, int newIndex)
     {
         dice.CurrentSideIndex = newIndex;
 
-        _communication.SendEntityRelated(new DiceRolledMessage(dice, newIndex), dice);
+        (Seat?[] theyKnow, Seat?[] theyDontKnow) a = _limit.FindWitnesses(dice);
+
+        _communication.SendEntityRelated(new DiceRolledMessage(dice, newIndex), dice, a.theyKnow);
+        _communication.SendEntityRelated(new DiceRolledMessage(dice, null), dice, a.theyDontKnow);
     }
 
     public void Roll(Dice dice)
@@ -50,7 +85,10 @@ public class DicesSystem : SystemBase
 
         dice.CurrentSideIndex = newIndex;
 
-        _communication.SendEntityRelated(new DiceRolledMessage(dice, newIndex), dice);
+        (Seat?[] theyKnow, Seat?[] theyDontKnow) a = _limit.FindWitnesses(dice);
+
+        _communication.SendEntityRelated(new DiceRolledMessage(dice, newIndex), dice, a.theyKnow);
+        _communication.SendEntityRelated(new DiceRolledMessage(dice, null), dice, a.theyDontKnow);
     }
 
     private void Limited(LimitedEvent obj)
