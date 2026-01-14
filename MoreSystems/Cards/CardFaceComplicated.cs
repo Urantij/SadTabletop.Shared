@@ -16,6 +16,15 @@ public class CardFaceComplicated(int side, List<CardRenderInfo>? renderInfos)
 
     public static CardFaceComplicatedBuilder CreateBuilder(int side) => new CardFaceComplicatedBuilder(side);
 
+    /// <summary>
+    /// Создаёт копию, копии <see cref="RenderInfos"/>
+    /// </summary>
+    /// <returns></returns>
+    public CardFaceComplicated Clowne()
+    {
+        return new CardFaceComplicated(Side, RenderInfos?.Select(r => r.Clowne()).ToList());
+    }
+
     // public static bool CompareSide(CardFaceComplicated face1, CardFaceComplicated face2)
     // {
     //     

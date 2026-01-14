@@ -1,5 +1,6 @@
 using System.Reflection;
 using SadTabletop.Shared.EvenMoreSystems.CardSelection;
+using SadTabletop.Shared.EvenMoreSystems.Chat;
 using SadTabletop.Shared.EvenMoreSystems.Drag;
 using SadTabletop.Shared.EvenMoreSystems.Playable;
 using SadTabletop.Shared.Mechanics;
@@ -66,6 +67,8 @@ public static class GameCreator
         game.Systems.Add(new DragSystem(game));
 
         game.Systems.Add(new CardSelectionSystem(game));
+
+        game.Systems.Add(new ChatSystem(game));
 
         game.Systems.Add(new MasterSystem(game));
 

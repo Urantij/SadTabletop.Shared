@@ -8,4 +8,9 @@ public abstract class CardRenderInfo
     // А он вообще нужен? Можно же просто по индексу отсылаться, когда нужно изменить
     public int Id { get; }
     public int Layer { get; }
+
+    public CardRenderInfo Clowne()
+    {
+        return (CardRenderInfo)this.MemberwiseClone();
+    }
 }
