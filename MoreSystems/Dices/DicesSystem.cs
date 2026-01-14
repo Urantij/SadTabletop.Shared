@@ -1,5 +1,6 @@
 using SadTabletop.Shared.Mechanics;
 using SadTabletop.Shared.MoreSystems.Dices.Messages;
+using SadTabletop.Shared.Systems.Assets;
 using SadTabletop.Shared.Systems.Communication;
 using SadTabletop.Shared.Systems.Events;
 using SadTabletop.Shared.Systems.Limit;
@@ -39,6 +40,10 @@ public class DicesSystem : SystemBase
         _viewer.RegisterEntity<Dice>(TransformDice);
     }
 
+    public Dice CreateSimpleDice(float x, float y, int[] sideValues, AssetInfo? defaultAsset, int currentIndex = 0,
+        bool sendRelatedMessage = true)
+        => CreateSimpleDice(x, y, sideValues, defaultAsset?.Id, currentIndex, sendRelatedMessage);
+
     public Dice CreateSimpleDice(float x, float y, int[] sideValues, int? defaultAssetId, int currentIndex = 0,
         bool sendRelatedMessage = true)
     {
@@ -53,6 +58,10 @@ public class DicesSystem : SystemBase
 
         return dice;
     }
+
+    public Dice CreateDice(float x, float y, DiceSide[] sides, AssetInfo? defaultAsset, int currentIndex = 0,
+        bool sendRelatedMessage = true)
+        => CreateDice(x, y, sides, defaultAsset?.Id, currentIndex, sendRelatedMessage);
 
     public Dice CreateDice(float x, float y, DiceSide[] sides, int? defaultAssetId, int currentIndex = 0,
         bool sendRelatedMessage = true)
