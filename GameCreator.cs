@@ -11,6 +11,7 @@ using SadTabletop.Shared.MoreSystems.Hands;
 using SadTabletop.Shared.MoreSystems.Hints;
 using SadTabletop.Shared.MoreSystems.Settings;
 using SadTabletop.Shared.MoreSystems.Shapes;
+using SadTabletop.Shared.MoreSystems.Sounds;
 using SadTabletop.Shared.MoreSystems.Sprites;
 using SadTabletop.Shared.MoreSystems.Texts;
 using SadTabletop.Shared.Systems.Assets;
@@ -59,6 +60,7 @@ public static class GameCreator
         game.Systems.Add(new ShapesSystem(game));
         game.Systems.Add(new SpritesSystem(game));
         game.Systems.Add(new SettingsSystem(game));
+        game.Systems.Add(new SoundsSystem(game));
 
         game.Systems.Add(new HandsSystem(game));
 
