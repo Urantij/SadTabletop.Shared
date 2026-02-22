@@ -10,7 +10,7 @@ public class AssetsSystem : EntitiesSystem<AssetInfo>
 
     public AssetInfo AddCardAsset(int num, string url)
     {
-        AssetInfo assetInfo = new AssetInfo($"card{num}", url);
+        AssetInfo assetInfo = new AssetInfo($"card{num}", url, AssetVariant.Image);
 
         this.AddEntity(assetInfo);
 
@@ -19,7 +19,7 @@ public class AssetsSystem : EntitiesSystem<AssetInfo>
 
     public AssetInfo AddAsset(string name, string url)
     {
-        AssetInfo assetInfo = new AssetInfo(name, url);
+        AssetInfo assetInfo = new AssetInfo(name, url, AssetVariant.Image);
 
         this.AddEntity(assetInfo);
 
