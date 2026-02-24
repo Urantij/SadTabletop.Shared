@@ -34,19 +34,20 @@ public class SoundsSystem : SystemBase
     /// <summary>
     /// Проиграть звук для всех
     /// </summary>
-    public void PlaySound(AssetInfo assetInfo, float? multiplier = null)
+    public void PlaySound(AssetInfo assetInfo, float? multiplier = null, SoundCategory category = SoundCategory.Effect)
     {
-        PlaySoundMessage message = new(assetInfo.Name, multiplier, null);
+        PlaySoundMessage message = new(assetInfo.Name, multiplier, null, category);
         _communication.Send(message);
     }
 
-    public SoundRemote PlayControllableSound(AssetInfo assetInfo, float? multiplier = null)
+    public SoundRemote PlayControllableSound(AssetInfo assetInfo, float? multiplier = null,
+        SoundCategory category = SoundCategory.Effect)
     {
         int playId = GetNextPlayId();
 
         SoundRemote remote = new(playId, null);
 
-        PlaySoundMessage message = new(assetInfo.Name, multiplier, playId);
+        PlaySoundMessage message = new(assetInfo.Name, multiplier, playId, category);
         _communication.Send(message);
 
         return remote;
