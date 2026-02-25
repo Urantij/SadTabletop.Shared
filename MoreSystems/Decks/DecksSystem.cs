@@ -58,7 +58,38 @@ public class DecksSystem : SystemBase
     }
 
     /// <summary>
-    /// Создаёт колоду с картами внутри. Принимает инфу о картах, создаёт ентити кард без сообщений, и кладёт их в колоду.
+    /// Создаёт колоду из существующих карт. Создаёт колоду, каждую карту кладёт, используя указанный <see cref="way"/>
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="flipness"></param>
+    /// <param name="cards"></param>
+    /// <param name="contentViewers"></param>
+    /// <param name="orderedContentViewers"></param>
+    /// <param name="way"></param>
+    /// <returns></returns>
+    public Deck CreateFrom(float x, float y, Flipness flipness, IEnumerable<Card> cards,
+        Spisok<Seat?>? contentViewers = null, Spisok<Seat?>? orderedContentViewers = null, DeckWay way = DeckWay.Front)
+    {
+        Deck deck = new([], orderedContentViewers, contentViewers)
+        {
+            Flipness = flipness,
+            X = x,
+            Y = y,
+        };
+
+        _table.AddEntity(deck);
+
+        foreach (Card card in cards)
+        {
+            PutCard(deck, card, way);
+        }
+
+        return deck;
+    }
+
+    /// <summary>
+    /// Создаёт колоду с новыми картами внутри. Принимает инфу о картах, создаёт ентити кард без сообщений, и кладёт их в колоду.
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -67,7 +98,7 @@ public class DecksSystem : SystemBase
     /// <param name="contentViewers"></param>
     /// <param name="orderedContentViewers"></param>
     /// <returns></returns>
-    public Deck Create(float x, float y, Flipness flipness, List<CardInfo> infos,
+    public Deck CreateNew(float x, float y, Flipness flipness, List<CardInfo> infos,
         Spisok<Seat?>? contentViewers = null, Spisok<Seat?>? orderedContentViewers = null)
     {
         // если просто поставить айди от 0 до Count и зашафлить, то с клиента будет видно, что это ток что созданная дека
@@ -229,7 +260,7 @@ public class DecksSystem : SystemBase
     }
 
     /// <summary>
-    /// Достаёт карту из колоды и кладёт её лицом вверх поверх колоды.
+    /// Достаёт конкретную карту из колоды и кладёт её лицом вверх поверх колоды.
     /// </summary>
     /// <param name="deck"></param>
     /// <param name="card"></param>
