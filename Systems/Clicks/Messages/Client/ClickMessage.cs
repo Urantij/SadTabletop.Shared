@@ -3,9 +3,11 @@ using SadTabletop.Shared.Systems.Table;
 
 namespace SadTabletop.Shared.Systems.Clicks.Messages.Client;
 
-public class ClickMessage(TableItem item, int clickId) : ClientMessageBase
+public class ClickMessage(TableItem item, int clickId, float? x, float? y) : ClientMessageBase
 {
     // да можно было дальше ломать комедию с сериализацией, но я устал
     public TableItem Item { get; } = item;
     public int ClickId { get; } = clickId;
+    public float? X { get; } = x;
+    public float? Y { get; } = y;
 }

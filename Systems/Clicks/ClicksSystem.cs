@@ -36,13 +36,15 @@ public class ClicksSystem : ComponentSystemBase
         Game.GetSystem<ViewerSystem>().RegisterComponent<ClickComponent>(TransformClick);
     }
 
-    public ClickComponent AddClick(TableItem item, Seat? seat, Action<Click> @delegate, bool singleUse = true)
+    public ClickComponent AddClick(TableItem item, Seat? seat, Action<Click> @delegate, bool singleUse = true,
+        bool sendClickPosition = false)
     {
-        ClickComponent component = new(seat, @delegate, singleUse);
+        ClickComponent component = new(seat, @delegate, singleUse, sendClickPosition);
         AddComponentToEntity(item, component);
 
-        // компоненты всем видны.. наверное в будущем надо как то поменять, а то тупо
-        _communication.SendEntityRelated(new ItemClickyMessage(item, component, true, singleUse), item);
+        // TODO компоненты всем видны.. наверное в будущем надо как то поменять, а то тупо
+        _communication.SendEntityRelated(new ItemClickyMessage(item, component, true, singleUse, sendClickPosition),
+            item);
 
         return component;
     }
@@ -51,7 +53,7 @@ public class ClicksSystem : ComponentSystemBase
     {
         RemoveComponentFromEntity(item, component);
 
-        _communication.SendEntityRelated(new ItemClickyMessage(item, component, false, null), item);
+        _communication.SendEntityRelated(new ItemClickyMessage(item, component, false, null, null), item);
     }
 
     private void ClientClicked(ClientMessageReceivedEvent<ClickMessage> obj)
@@ -73,6 +75,12 @@ public class ClicksSystem : ComponentSystemBase
             return;
         }
 
+        if (clickComponent.SendClickPosition && (obj.Message.X == null || obj.Message.Y == null))
+        {
+            // TODO warn
+            return;
+        }
+
         if (clickComponent.SingleUse)
         {
             // TODO есть нескоко моментов. если я собираюсь делать 1 клики доступный несколькоим ситам,
@@ -83,7 +91,7 @@ public class ClicksSystem : ComponentSystemBase
             RemoveClick(obj.Message.Item, clickComponent);
         }
 
-        clickComponent.Delegate(new Click(obj.Seat, obj.Message.Item, clickComponent));
+        clickComponent.Delegate(new Click(obj.Seat, obj.Message.Item, clickComponent, obj.Message.X, obj.Message.Y));
     }
 
     private ClickClientComponentDto TransformClick(ClickComponent component, Seat? target)
