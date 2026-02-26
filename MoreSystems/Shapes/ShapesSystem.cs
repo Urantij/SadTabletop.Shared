@@ -1,9 +1,12 @@
-using SadTabletop.Shared.Systems.Entities;
+using SadTabletop.Shared.Mechanics;
+using SadTabletop.Shared.Systems.Table;
 
 namespace SadTabletop.Shared.MoreSystems.Shapes;
 
-public class ShapesSystem : EntitiesSystem<SomeShape>
+public class ShapesSystem : SystemBase
 {
+    private readonly TableSystem _table;
+
     public ShapesSystem(Game game) : base(game)
     {
     }
@@ -12,7 +15,7 @@ public class ShapesSystem : EntitiesSystem<SomeShape>
     {
         RectShape rect = new(x, y, width, height, color);
 
-        AddEntity(rect);
+        _table.AddEntity(rect);
 
         return rect;
     }
@@ -21,7 +24,7 @@ public class ShapesSystem : EntitiesSystem<SomeShape>
     {
         CircleShape circle = new(x, y, radius, color);
 
-        AddEntity(circle);
+        _table.AddEntity(circle);
 
         return circle;
     }
