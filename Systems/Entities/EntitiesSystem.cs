@@ -1,7 +1,11 @@
 using SadTabletop.Shared.Mechanics;
-using SadTabletop.Shared.Systems.Entities.Events;
+using SadTabletop.Shared.Systems.Communication;
 using SadTabletop.Shared.Systems.Events;
+using SadTabletop.Shared.Systems.Seats;
+using SadTabletop.Shared.Systems.Synchro;
+using SadTabletop.Shared.Systems.Synchro.Messages;
 using SadTabletop.Shared.Systems.Table;
+using SadTabletop.Shared.Systems.Viewer;
 
 namespace SadTabletop.Shared.Systems.Entities;
 
@@ -29,6 +33,10 @@ public abstract class EntitiesSystem : SystemBase
 public abstract class EntitiesSystem<T> : EntitiesSystem
     where T : EntityBase
 {
+    protected readonly CommunicationSystem Communication;
+    protected readonly SeatsSystem Seats;
+    protected readonly ViewerSystem Viewer;
+
     // Бд не любит, когда у ентити айди 0.
     protected int NextId = 1;
 
@@ -52,17 +60,33 @@ public abstract class EntitiesSystem<T> : EntitiesSystem
 
         List.Add(entity);
 
-        Events.Invoke(new EntityAddedEvent(entity, this, sendRelatedMessage));
+        if (sendRelatedMessage)
+        {
+            // TODO можно отправлять одно сообщение всем у кого вьювнутный ентити совпадает
+
+            foreach (Seat? seat in Seats.EnumerateAllSeats())
+            {
+                ViewedEntity viewed = Viewer.ViewEntity(entity, seat);
+                Communication.Send(new EntityAddedMessage(viewed), seat);
+            }
+        }
+
+        // Events.Invoke(new EntityAddedEvent(entity, this, sendRelatedMessage));
     }
 
     public void RemoveEntity(T entity, bool sendRelatedMessage = true)
     {
         List.Remove(entity);
 
+        if (sendRelatedMessage)
+        {
+            Communication.SendEntityRelated(new EntityRemovedMessage(entity), entity);
+        }
+
         // И вот тут возникает вопрос. sendRelatedMessage класть в ивент, или мне нужно было руками вызывать прямо тут метод
         // но я не думал и думать не буду
 
-        Events.Invoke(new EntityRemovedEvent(entity, this, sendRelatedMessage));
+        // Events.Invoke(new EntityRemovedEvent(entity, this, sendRelatedMessage));
     }
 
     public T GetEntity(int id)

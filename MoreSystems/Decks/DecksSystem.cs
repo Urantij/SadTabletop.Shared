@@ -24,7 +24,6 @@ namespace SadTabletop.Shared.MoreSystems.Decks;
 public class DecksSystem : SystemBase
 {
     private readonly EventsSystem _events;
-    private readonly SynchroSystem _synchro;
     private readonly VisabilitySystem _visability;
     private readonly LimitSystem _limit;
     private readonly ViewerSystem _viewer;
@@ -376,14 +375,14 @@ public class DecksSystem : SystemBase
                     side = displayedCard?.Back;
                 }
 
-                ViewedEntity cardToSend = _synchro.ViewEntity(card, seat);
+                ViewedEntity cardToSend = _viewer.ViewEntity(card, seat);
 
                 DeckCardRemovedMessage message = new(deck, cardToSend, side, removedCardDeckId);
                 _communication.Send(message, seat);
             }
             else
             {
-                EntityAddedMessage message = new(_synchro.ViewEntity(card, seat));
+                EntityAddedMessage message = new(_viewer.ViewEntity(card, seat));
 
                 _communication.Send(message, seat);
             }

@@ -3,6 +3,7 @@ using SadTabletop.Shared.Systems.Communication;
 using SadTabletop.Shared.Systems.Seats;
 using SadTabletop.Shared.Systems.Synchro;
 using SadTabletop.Shared.Systems.Synchro.Messages;
+using SadTabletop.Shared.Systems.Viewer;
 
 namespace SadTabletop.Shared.Systems.Visability;
 
@@ -15,7 +16,7 @@ public class VisabilitySystem : ComponentSystemBase
 {
     private readonly SeatsSystem _seats;
     private readonly CommunicationSystem _communication;
-    private readonly SynchroSystem _synchro;
+    private readonly ViewerSystem _viewer;
 
     public VisabilitySystem(Game game) : base(game)
     {
@@ -38,7 +39,7 @@ public class VisabilitySystem : ComponentSystemBase
 
         visability.Viewers.AddToInclude(target);
 
-        ViewedEntity view = _synchro.ViewEntity(entity, target);
+        ViewedEntity view = _viewer.ViewEntity(entity, target);
 
         _communication.Send(new EntityAddedMessage(view), target);
     }
@@ -108,7 +109,7 @@ public class VisabilitySystem : ComponentSystemBase
 
         if (announceToExceptional)
         {
-            ViewedEntity view = _synchro.ViewEntity(entity, exceptionalTarget);
+            ViewedEntity view = _viewer.ViewEntity(entity, exceptionalTarget);
 
             _communication.Send(new EntityAddedMessage(view), exceptionalTarget);
         }

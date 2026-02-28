@@ -23,7 +23,6 @@ using SadTabletop.Shared.Systems.Limit;
 using SadTabletop.Shared.Systems.MyRandom;
 using SadTabletop.Shared.Systems.Runs;
 using SadTabletop.Shared.Systems.Seats;
-using SadTabletop.Shared.Systems.Synchro;
 using SadTabletop.Shared.Systems.Table;
 using SadTabletop.Shared.Systems.Times;
 using SadTabletop.Shared.Systems.Viewer;
@@ -43,7 +42,7 @@ public static class GameCreator
         game.Systems.Add(new RandomSystem(game));
         game.Systems.Add(new RunnerQueueSystem(game));
         game.Systems.Add(new SeatsSystem(game));
-        game.Systems.Add(new SynchroSystem(game));
+        // game.Systems.Add(new SynchroSystem(game));
         game.Systems.Add(new TableSystem(game));
         game.Systems.Add(new ViewerSystem(game));
         game.Systems.Add(new VisabilitySystem(game));

@@ -1,5 +1,8 @@
 using SadTabletop.Shared.Mechanics;
+using SadTabletop.Shared.Systems.Entities;
 using SadTabletop.Shared.Systems.Seats;
+using SadTabletop.Shared.Systems.Synchro;
+using SadTabletop.Shared.Systems.Visability;
 
 namespace SadTabletop.Shared.Systems.Viewer;
 
@@ -19,12 +22,35 @@ public class PointOfView(Type type, Delegate @delegate)
 /// </summary>
 public class ViewerSystem : SystemBase
 {
+    private readonly VisabilitySystem _visability;
+
     // TODO наверное не надо инклуд, пусть системы каждый раз регают, но нужно это как то вынести в описание.
     private readonly List<PointOfView> _entities = new();
     private readonly List<PointOfView> _components = new();
 
     public ViewerSystem(Game game) : base(game)
     {
+    }
+
+    public IEnumerable<ViewedEntity> ViewEntities(EntitiesSystem entitiesSystem, Seat? target)
+    {
+        if (!entitiesSystem.ClientSided)
+            throw new Exception($"эта система не клиент сидед {entitiesSystem.GetType().Name}");
+
+        return entitiesSystem.EnumerateRawEntities()
+            .Where(e => _visability.IsVisibleFor(e, target))
+            .Select(e => ViewEntity(e, target));
+    }
+
+    public ViewedEntity ViewEntity(EntityBase entity, Seat? target)
+    {
+        return new ViewedEntity(
+            this.View(entity, target),
+            entity.ReadClientComponents()
+                .Select(c => this.View(c, target))
+                .Where(c => c != null)
+                .ToArray()
+        );
     }
 
     public IEntity View(IEntity entity, Seat? seat)
