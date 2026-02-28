@@ -3,6 +3,7 @@ using SadTabletop.Shared.EvenMoreSystems.CardSelection;
 using SadTabletop.Shared.EvenMoreSystems.Chat;
 using SadTabletop.Shared.EvenMoreSystems.Drag;
 using SadTabletop.Shared.EvenMoreSystems.Playable;
+using SadTabletop.Shared.EvenMoreSystems.Popit;
 using SadTabletop.Shared.Mechanics;
 using SadTabletop.Shared.MoreSystems.Cards;
 using SadTabletop.Shared.MoreSystems.Decks;
@@ -63,6 +64,8 @@ public static class GameCreator
         game.Systems.Add(new SoundsSystem(game));
 
         game.Systems.Add(new HandsSystem(game));
+
+        game.Systems.Add(new PopitsSystem(game));
 
         game.Systems.Add(new AssetsSystem(game));
 

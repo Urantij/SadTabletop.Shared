@@ -37,14 +37,17 @@ public class ClicksSystem : ComponentSystemBase
     }
 
     public ClickComponent AddClick(TableItem item, Seat? seat, Action<Click> @delegate, bool singleUse = true,
-        bool sendClickPosition = false)
+        bool sendClickPosition = false, bool sendRelatedMessage = true)
     {
         ClickComponent component = new(seat, @delegate, singleUse, sendClickPosition);
         AddComponentToEntity(item, component);
 
         // TODO компоненты всем видны.. наверное в будущем надо как то поменять, а то тупо
-        _communication.SendEntityRelated(new ItemClickyMessage(item, component, true, singleUse, sendClickPosition),
-            item);
+        if (sendRelatedMessage)
+        {
+            _communication.SendEntityRelated(new ItemClickyMessage(item, component, true, singleUse, sendClickPosition),
+                item);
+        }
 
         return component;
     }
