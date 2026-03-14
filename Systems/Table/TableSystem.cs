@@ -13,20 +13,26 @@ public class TableSystem : EntitiesSystem<TableItem>
     {
     }
 
-    public void ChangeDescription(TableItem item, string? newDescription)
+    public void ChangeDescription(TableItem item, string? newDescription, bool sendRelatedMessage = true)
     {
         item.Description = newDescription;
 
-        DescriptionChangedMessage message = new(item, newDescription);
-        _communication.SendEntityRelated(message, item);
+        if (sendRelatedMessage)
+        {
+            DescriptionChangedMessage message = new(item, newDescription);
+            _communication.SendEntityRelated(message, item);
+        }
     }
 
-    public void MoveItem(TableItem item, float x, float y)
+    public void MoveItem(TableItem item, float x, float y, bool sendRelatedMessage = true)
     {
         item.X = x;
         item.Y = y;
 
-        _communication.SendEntityRelated(new ItemMovedMessage(item, x, y), item);
+        if (sendRelatedMessage)
+        {
+            _communication.SendEntityRelated(new ItemMovedMessage(item, x, y), item);
+        }
     }
 
     /// <summary>

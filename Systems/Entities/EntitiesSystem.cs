@@ -62,13 +62,7 @@ public abstract class EntitiesSystem<T> : EntitiesSystem
 
         if (sendRelatedMessage)
         {
-            // TODO можно отправлять одно сообщение всем у кого вьювнутный ентити совпадает
-
-            foreach (Seat? seat in Seats.EnumerateAllSeats())
-            {
-                ViewedEntity viewed = Viewer.ViewEntity(entity, seat);
-                Communication.Send(new EntityAddedMessage(viewed), seat);
-            }
+            AnnounceEntity(entity);
         }
 
         // Events.Invoke(new EntityAddedEvent(entity, this, sendRelatedMessage));
@@ -87,6 +81,22 @@ public abstract class EntitiesSystem<T> : EntitiesSystem
         // но я не думал и думать не буду
 
         // Events.Invoke(new EntityRemovedEvent(entity, this, sendRelatedMessage));
+    }
+
+    /// <summary>
+    /// Отправляет клиентам сообщение о добавлении данной ентити в игру.
+    /// Используется, если изначально было не отправлено сообщение.
+    /// </summary>
+    /// <param name="entity"></param>
+    public void AnnounceEntity(T entity)
+    {
+        // TODO можно отправлять одно сообщение всем у кого вьювнутный ентити совпадает
+
+        foreach (Seat? seat in Seats.EnumerateAllSeats())
+        {
+            ViewedEntity viewed = Viewer.ViewEntity(entity, seat);
+            Communication.Send(new EntityAddedMessage(viewed), seat);
+        }
     }
 
     public T GetEntity(int id)
